@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>{{ title or "Wonderland Trainer" }}</title>
+
+  <!-- Tailwind (CDN) -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Alpine -->
+  <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <script defer src="{{ url_for('static', filename='app.js') }}"></script>
+</head>
+
+<body class="bg-slate-950 text-slate-100">
+  <div class="min-h-screen">
+    <header class="sticky top-0 z-10 border-b border-slate-800 bg-slate-950/80 backdrop-blur">
+      <div class="mx-auto max-w-6xl px-4 py-4 flex items-center justify-between">
+        <a href="{{ url_for('dashboard') }}" class="flex items-center gap-3">
+          <div class="h-9 w-9 rounded-2xl bg-gradient-to-br from-indigo-500 to-cyan-400"></div>
+          <div class="leading-tight">
+            <div class="font-semibold">Wonderland Trainer</div>
+            <div class="text-xs text-slate-400">Incline treadmill plan + tracking</div>
+          </div>
+        </a>
+
+        <nav class="flex items-center gap-2">
+          <a href="{{ url_for('dashboard') }}" class="px-3 py-2 rounded-xl hover:bg-slate-900 text-sm">Dashboard</a>
+          <a href="{{ url_for('log_workout_form') }}" class="px-3 py-2 rounded-xl hover:bg-slate-900 text-sm">Log</a>
+          <a href="{{ url_for('workouts') }}" class="px-3 py-2 rounded-xl hover:bg-slate-900 text-sm">Workouts</a>
+          <a href="{{ url_for('settings') }}" class="px-3 py-2 rounded-xl hover:bg-slate-900 text-sm">Settings</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="mx-auto max-w-6xl px-4 py-8">
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          <div class="space-y-2 mb-6">
+            {% for category, msg in messages %}
+              <div class="rounded-2xl border border-slate-800 px-4 py-3 text-sm
+                          {% if category == 'success' %} bg-emerald-950/40 {% else %} bg-rose-950/40 {% endif %}">
+                {{ msg }}
+              </div>
+            {% endfor %}
+          </div>
+        {% endif %}
+      {% endwith %}
+
+      {% block content %}{% endblock %}
+    </main>
+
+    <footer class="mx-auto max-w-6xl px-4 pb-10 text-xs text-slate-500">
+      Built for treadmill-based vertical. Track distance × incline, pack, and RPE. Do not hold the rails.
+    </footer>
+  </div>
+</body>
+</html>

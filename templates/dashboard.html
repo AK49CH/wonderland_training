@@ -1,0 +1,119 @@
+{% extends "base.html" %}
+{% set title = "Dashboard • Wonderland Trainer" %}
+
+{% block content %}
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+  <section class="lg:col-span-2 space-y-6">
+    <div class="rounded-3xl border border-slate-800 bg-slate-900/30 p-6">
+      <div class="flex items-start justify-between gap-4">
+        <div>
+          <div class="text-sm text-slate-400">Week of {{ week_start.strftime("%b %d") }} – {{ week_end.strftime("%b %d") }}</div>
+          <div class="mt-1 text-2xl font-semibold">Phase: {{ target.name }}</div>
+          <div class="mt-2 text-sm text-slate-400">
+            Weekly vertical target: {{ target.vert_min }}–{{ target.vert_max }} ft · Long session: {{ target.long_min }}–{{ target.long_max }} min · Pack: {{ target.pack_min }}–{{ target.pack_max }} lb
+          </div>
+        </div>
+
+        <div class="text-right">
+          <div class="text-sm text-slate-400">Readiness</div>
+          <div class="mt-1 text-3xl font-semibold">{{ readiness }}</div>
+          <div class="text-xs text-slate-400">
+            {% if readiness < 70 %}Risk{% elif readiness < 85 %}Borderline{% else %}Ready{% endif %}
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-6">
+        <div class="flex items-center justify-between text-sm">
+          <span class="text-slate-400">Weekly progress</span>
+          <span class="text-slate-300">{{ weekly_progress }}%</span>
+        </div>
+
+        <div class="mt-2 h-3 w-full rounded-full bg-slate-800 overflow-hidden">
+          <!-- Avoid inline Jinja inside CSS to stop VS Code's CSS validator from erroring -->
+          <div
+            class="h-3 rounded-full bg-gradient-to-r from-indigo-500 to-cyan-400 transition-all"
+            style="width: 0%;"
+            data-progress="{{ weekly_progress }}">
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-6 grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div class="rounded-2xl border border-slate-800 bg-slate-950/40 p-4">
+          <div class="text-xs text-slate-400">Vertical (ft)</div>
+          <div class="mt-1 text-xl font-semibold">{{ metrics.vert|round0 }}</div>
+        </div>
+        <div class="rounded-2xl border border-slate-800 bg-slate-950/40 p-4">
+          <div class="text-xs text-slate-400">Avg pack (lb)</div>
+          <div class="mt-1 text-xl font-semibold">{{ metrics.avg_pack|round(1) }}</div>
+        </div>
+        <div class="rounded-2xl border border-slate-800 bg-slate-950/40 p-4">
+          <div class="text-xs text-slate-400">Longest (min)</div>
+          <div class="mt-1 text-xl font-semibold">{{ metrics.max_long }}</div>
+        </div>
+        <div class="rounded-2xl border border-slate-800 bg-slate-950/40 p-4">
+          <div class="text-xs text-slate-400">Stress</div>
+          <div class="mt-1 text-xl font-semibold">{{ metrics.stress|round(1) }}</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="rounded-3xl border border-slate-800 bg-slate-900/30 p-6">
+      <div class="flex items-center justify-between">
+        <div class="text-lg font-semibold">12-week trends</div>
+        <div class="text-xs text-slate-400">Vertical, pack, stress</div>
+      </div>
+      <div class="mt-4">
+        <canvas id="trendChart"
+          data-weeks='{{ series.weeks|tojson }}'
+          data-verts='{{ series.verts|tojson }}'
+          data-packs='{{ series.packs|tojson }}'
+          data-stresses='{{ series.stresses|tojson }}'
+          height="120"></canvas>
+      </div>
+    </div>
+  </section>
+
+  <aside class="space-y-6">
+    <div class="rounded-3xl border border-slate-800 bg-slate-900/30 p-6">
+      <div class="text-lg font-semibold">Flags</div>
+      <div class="mt-3 space-y-2 text-sm">
+        {% if flags %}
+          {% for _, msg in flags.items() %}
+            <div class="rounded-2xl border border-slate-800 bg-slate-950/40 px-3 py-2">
+              {{ msg }}
+            </div>
+          {% endfor %}
+        {% else %}
+          <div class="text-slate-400">No flags.</div>
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="rounded-3xl border border-slate-800 bg-slate-900/30 p-6">
+      <div class="text-lg font-semibold">Quick actions</div>
+      <div class="mt-4 space-y-2">
+        <a href="{{ url_for('log_workout_form') }}"
+           class="block rounded-2xl bg-gradient-to-r from-indigo-500 to-cyan-400 px-4 py-3 text-center text-sm font-semibold text-slate-950">
+          Log a workout
+        </a>
+        <a href="{{ url_for('workouts') }}"
+           class="block rounded-2xl border border-slate-800 bg-slate-950/40 px-4 py-3 text-center text-sm">
+          View workouts
+        </a>
+      </div>
+    </div>
+
+    <div class="rounded-3xl border border-slate-800 bg-slate-900/30 p-6">
+      <div class="text-lg font-semibold">Incline math</div>
+      <div class="mt-2 text-sm text-slate-300">
+        Vertical (ft) = miles × 5280 × incline%.
+      </div>
+      <div class="mt-3 text-xs text-slate-400">
+        Example: 3.0 mi @ 15% ≈ 2376 ft.
+      </div>
+    </div>
+  </aside>
+</div>
+{% endblock %}

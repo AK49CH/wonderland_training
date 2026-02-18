@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+{% set title = "Log • Wonderland Trainer" %}
+
+{% block content %}
+<div class="max-w-3xl">
+  <div class="rounded-3xl border border-slate-800 bg-slate-900/30 p-6">
+    <div class="flex items-start justify-between gap-4">
+      <div>
+        <div class="text-2xl font-semibold">Log workout</div>
+        <div class="mt-1 text-sm text-slate-400">Phase: {{ target.name }} · Weekly vertical target {{ target.vert_min }}–{{ target.vert_max }} ft</div>
+      </div>
+      <a href="{{ url_for('workouts') }}" class="text-sm text-slate-300 hover:text-white">View workouts →</a>
+    </div>
+
+    <form class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4" method="post" action="{{ url_for('log_workout_submit') }}">
+      <div class="md:col-span-1">
+        <label class="text-xs text-slate-400">Date</label>
+        <input name="session_date" type="date" value="{{ today.isoformat() }}"
+               class="mt-1 w-full rounded-2xl border border-slate-800 bg-slate-950/40 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-cyan-400" required>
+      </div>
+
+      <div class="md:col-span-1">
+        <label class="text-xs text-slate-400">Type</label>
+        <select name="type"
+                class="mt-1 w-full rounded-2xl border border-slate-800 bg-slate-950/40 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-cyan-400" required>
+          <option value="incline" selected>Incline treadmill</option>
+          <option value="flat">Flat walk/run</option>
+          <option value="strength">Strength / downhill (eccentric)</option>
+          <option value="recovery">Recovery</option>
+        </select>
+      </div>
+
+      <div>
+        <label class="text-xs text-slate-400">Duration (min)</label>
+        <input name="duration_min" type="number" min="1" step="1" value="60"
+               class="mt-1 w-full rounded-2xl border border-slate-800 bg-slate-950/40 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-cyan-400" required>
+      </div>
+
+      <div>
+        <label class="text-xs text-slate-400">Distance (mi)</label>
+        <input name="distance_mi" type="number" min="0" step="0.01" value="3.00"
+               class="mt-1 w-full rounded-2xl border border-slate-800 bg-slate-950/40 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-cyan-400">
+      </div>
+
+      <div>
+        <label class="text-xs text-slate-400">Incline (%)</label>
+        <input name="incline_pct" type="number" min="0" step="0.1" value="15.0"
+               class="mt-1 w-full rounded-2xl border border-slate-800 bg-slate-950/40 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-cyan-400">
+      </div>
+
+      <div>
+        <label class="text-xs text-slate-400">Pack (lb)</label>
+        <input name="pack_lb" type="number" min="0" step="0.5" value="{{ target.pack_min }}"
+               class="mt-1 w-full rounded-2xl border border-slate-800 bg-slate-950/40 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-cyan-400">
+      </div>
+
+      <div>
+        <label class="text-xs text-slate-400">RPE (1–10)</label>
+        <input name="rpe" type="number" min="1" max="10" step="1" value="6"
+               class="mt-1 w-full rounded-2xl border border-slate-800 bg-slate-950/40 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-cyan-400" required>
+      </div>
+
+      <div class="md:col-span-2">
+        <label class="text-xs text-slate-400">Notes</label>
+        <textarea name="notes" rows="3" placeholder="Pain? rails? shoes? fueling?"
+                  class="mt-1 w-full rounded-2xl border border-slate-800 bg-slate-950/40 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-cyan-400"></textarea>
+      </div>
+
+      <div class="md:col-span-2 flex items-center justify-between">
+        <div class="text-xs text-slate-400">
+          Tip: vertical = miles × 5280 × incline%.
+        </div>
+        <button type="submit"
+                class="rounded-2xl bg-gradient-to-r from-indigo-500 to-cyan-400 px-5 py-2.5 text-sm font-semibold text-slate-950">
+          Save
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}
